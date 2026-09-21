@@ -35,19 +35,21 @@ This application is built around the **Two-Asset Sales Enablement Pattern**:
 
 ---
 
-## ❄️ Step-by-Step Deployment Guide in Snowsight
+## ❄️ Deployment Guide
 
-You can deploy and manage this entire application directly inside the **Snowsight Web UI** without installing any local tools.
+Deploying a Snowflake App Runtime (SAR) application involves two simple parts:
+1. **Infrastructure Setup in Snowsight** (SQL Worksheet).
+2. **1-Command Deployment** via Cortex Code Desktop / Snowflake CLI.
 
 ---
 
-### Step 1: Provision Account Infrastructure in Snowsight
+### Step 1: Run Setup SQL in Snowsight
 
-1. Sign in to **Snowsight**.
-2. Open a **SQL Worksheet** (click **Projects** $\rightarrow$ **Worksheets** $\rightarrow$ **+ Worksheet**).
-3. Switch your role to **`ACCOUNTADMIN`** in the top right selector.
-4. Copy and paste the contents of [`setup.sql`](./setup.sql) into the worksheet and click **Run All** (Cmd/Ctrl + Shift + Enter).
-5. Grant the created roles to your developer user and your sales team:
+1. Sign in to your Snowflake account via **Snowsight**.
+2. Open a **SQL Worksheet** (**Projects** $\rightarrow$ **Worksheets** $\rightarrow$ **+ Worksheet**).
+3. Set your role to **`ACCOUNTADMIN`** in the top right corner.
+4. Copy and paste the contents of [`setup.sql`](./setup.sql) and click **Run All** (Cmd/Ctrl + Shift + Enter).
+5. Grant the created roles to your developer user and sales team:
    ```sql
    -- Grant deployer role to yourself:
    GRANT ROLE SALES_APP_DEPLOYER_ROLE TO USER <YOUR_SNOWFLAKE_USERNAME>;
@@ -58,38 +60,9 @@ You can deploy and manage this entire application directly inside the **Snowsigh
 
 ---
 
-### Step 2: Deploy the App via Snowsight Workspaces
+### Step 2: Deploy the App via Cortex Code Desktop / Snowflake CLI
 
-1. In Snowsight, navigate to the left navigation menu: **Projects** $\rightarrow$ **Workspaces**.
-2. Click **+ Workspace** $\rightarrow$ select **From Git repository**.
-   - **Repository URL**: Paste your Git repository URL.
-   - **Branch**: Select `main`.
-   - **Role**: Select `SALES_APP_DEPLOYER_ROLE`.
-   - **Warehouse**: Select `APPS_WH`.
-3. Click **Create Workspace**.
-4. Once the workspace opens in Snowsight:
-   - If your HTML files were not in the Git repository, upload them into the `html_assets/` folder by clicking the **+** icon next to `html_assets` and choosing **Upload File**.
-   - Snowsight automatically detects `app.yml` in the root folder.
-5. In the top right corner of the workspace header, click the **Deploy** button.
-6. Snowsight will automatically package the application, build the container, and launch the `APPLICATION SERVICE`.
-7. Once deployment finishes (approx. 1–2 minutes):
-   - A **Live Preview** tab will open right inside Snowsight.
-   - An **App URL** (e.g. `https://<account-id>.snowflakecomputing.app/...`) will be generated for your organization.
-
----
-
-### Step 3: Share the Application with Your Team
-
-1. In Snowsight, go to **Projects** $\rightarrow$ **Application Services** (or open the deployed app from your workspace).
-2. Click the **Share** button in the top right corner.
-3. Select the role(s) you want to give access to (e.g., `SALES_APP_VIEWER_ROLE` or your team's role) and click **Save**.
-4. Copy the Application URL and share it with your team.
-
----
-
-## 💻 Alternative: Deploying via Snowflake CLI
-
-If you prefer deploying from your local terminal:
+From your terminal inside this repository folder (or inside Cortex Code Desktop):
 
 ```bash
 # 1. Install dependencies
@@ -98,6 +71,24 @@ npm install
 # 2. Deploy to Snowflake
 snow app deploy
 ```
+
+Snowflake App Runtime will automatically package your application, upload the assets, provision the artifact repository, build the container, and launch the `APPLICATION SERVICE` (`APPS_DB.SALES_APPS.SALES_EDUCATION_APP`).
+
+Once complete, the CLI outputs the direct application URL:
+```text
+Application deployed successfully!
+URL: https://<account_locator>.snowflakecomputing.app/...
+```
+
+---
+
+### Step 3: Access & Share in Snowsight
+
+End users access the deployed application entirely through their browser / Snowsight with zero CLI required:
+
+1. In Snowsight, navigate to **Projects** $\rightarrow$ **Application Services**.
+2. Click on **`SALES_EDUCATION_APP`** to open the live application or view logs and health status.
+3. Click the **Share** button to grant access to additional teams or users (or grant `SALES_APP_VIEWER_ROLE`).
 
 ---
 
