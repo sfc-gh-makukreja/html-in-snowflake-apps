@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+.scai/tmp/
+.scai/monitor/
+package-lock.json
+
+# Ignore partner HTML assets from git tracking
+html_assets/*.html
+!html_assets/.gitkeep
