@@ -13,7 +13,7 @@
 // ============================================================================
 
 /**
- * Sends meeting notes or call transcript to Snowflake Cortex COMPLETE (Claude 3.5 Sonnet)
+ * Sends meeting notes or call transcript to Snowflake Cortex COMPLETE (Claude Sonnet 5)
  * @param {string} transcriptText - Raw conversation text or notes
  * @returns {Promise<string|null>} - Formatted AI analysis or null on error
  */
@@ -26,7 +26,7 @@ async function analyzeTranscriptWithCortex(transcriptText) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt: `You are an executive sales engineer. Briefly analyze this customer conversation transcript for Data & AI opportunity fit (3-4 sentences highlighting: 1. Main Data/AI Pain Points, 2. Recommended Solution Pitch, 3. Qualification Recommendation):\n\n${transcriptText}`,
-        model: 'claude-3-5-sonnet'
+        model: 'claude-sonnet-5'
       })
     });
 
@@ -67,7 +67,7 @@ async function runCortexQualification(customAnswers = null, customNotes = null) 
     resultsPanel.innerHTML = `
       <div style="display:flex; align-items:center; gap: 0.75rem; color: #475569;">
         <div style="border: 3px solid #cbd5e1; border-top: 3px solid #29b5e8; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite;"></div>
-        <span>Querying Snowflake Cortex AI model (Claude 3.5 Sonnet)...</span>
+        <span>Querying Snowflake Cortex AI model (Claude Sonnet 5)...</span>
       </div>
       <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
     `;
@@ -84,7 +84,7 @@ async function runCortexQualification(customAnswers = null, customNotes = null) 
       body: JSON.stringify({
         answers: answers,
         prospectNotes: notes,
-        model: 'claude-3-5-sonnet' // or 'llama3.1-70b'
+        model: 'claude-sonnet-5' // or 'llama3.1-70b'
       })
     });
 

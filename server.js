@@ -52,7 +52,7 @@ function getSnowflakeConnection() {
 /**
  * Execute a Cortex LLM Completion query against Snowflake
  */
-function executeCortexComplete(prompt, model = 'claude-3-5-sonnet') {
+function executeCortexComplete(prompt, model = 'claude-sonnet-5') {
   return new Promise((resolve, reject) => {
     const connection = getSnowflakeConnection();
 
@@ -88,7 +88,7 @@ app.post('/api/cortex/complete', async (req, res) => {
     if (!prompt) {
       return res.status(400).json({ success: false, error: 'prompt is required in request body' });
     }
-    const selectedModel = model || 'claude-3-5-sonnet';
+    const selectedModel = model || 'claude-sonnet-5';
     const result = await executeCortexComplete(prompt, selectedModel);
     res.json({ success: true, model: selectedModel, response: result });
   } catch (err) {
@@ -121,7 +121,7 @@ Please provide a structured, concise assessment in Markdown with the following s
 4. **Objection Anticipation & Landmines**: What the prospect will likely push back on and how to address it.
 5. **Recommended Next Steps**: Concrete actions for the next follow-up.`;
 
-    const selectedModel = model || 'claude-3-5-sonnet';
+    const selectedModel = model || 'claude-sonnet-5';
     const analysis = await executeCortexComplete(prompt, selectedModel);
     res.json({ success: true, model: selectedModel, analysis });
   } catch (err) {
