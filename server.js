@@ -29,7 +29,8 @@ function getSnowflakeConnection() {
   const hasToken = fs.existsSync(tokenPath);
 
   const connectionConfig = {
-    account: process.env.SNOWFLAKE_ACCOUNT || process.env.SNOWPATH_ACCOUNT,
+    account: process.env.SNOWFLAKE_ACCOUNT,
+    host: process.env.SNOWFLAKE_HOST,
     database: process.env.SNOWFLAKE_DATABASE || 'APPS_DB',
     schema: process.env.SNOWFLAKE_SCHEMA || 'SALES_APPS',
     warehouse: process.env.SNOWFLAKE_WAREHOUSE || 'APPS_WH'
@@ -40,13 +41,11 @@ function getSnowflakeConnection() {
       connectionConfig.authenticator = 'OAUTH';
       connectionConfig.token = fs.readFileSync(tokenPath, 'utf8').trim();
     } catch (e) {
-      console.warn('Could not read container session token, falling back to env credentials:', e.message);
+      console.warn('Could not read container session token:', e.message);
     }
-  } else if (process.env.SNOWFLAKE_PASSWORD) {
-    connectionConfig.username = process.env.SNOWFLAKE_USER || process.env.USER;
-    connectionConfig.password = process.env.SNOWFLAKE_PASSWORD;
   }
 
+  console.log(`[Snowflake Connection] account=${connectionConfig.account}, host=${connectionConfig.host}, db=${connectionConfig.database}, wh=${connectionConfig.warehouse}`);
   return snowflake.createConnection(connectionConfig);
 }
 
