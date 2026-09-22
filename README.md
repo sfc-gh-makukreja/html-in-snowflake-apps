@@ -1,6 +1,6 @@
 # Sales Enablement & Opportunity Qualification App (Snowflake App Runtime)
 
-A turnkey, customizable boilerplate for hosting and sharing interactive **Sales Education & Opportunity Qualification** assets inside **Snowflake App Runtime (SAR)**.
+A turnkey, customizable boilerplate for hosting and sharing interactive **Sales Education & Opportunity Qualification** assets inside **Snowflake App Runtime (SAR)** with optional **Cortex AI** deal intelligence.
 
 ---
 
@@ -50,6 +50,28 @@ Example: https://a5bjcf-sfseapac-makukreja-aws-us-west-2.snowflakecomputing.app
 
 ---
 
+## 🤖 Optional: Enable Cortex AI Deal Intelligence
+
+This boilerplate includes built-in backend APIs (`/api/cortex/qualify` and `/api/cortex/complete`) that execute **Snowflake Cortex LLM** functions (Claude 3.5 Sonnet, Llama 3.1) directly using the container's session token.
+
+### 1. Enable Cortex Permissions in Snowflake
+Run [`enable_cortex.sql`](./enable_cortex.sql) as `ACCOUNTADMIN`:
+```sql
+-- Grants Cortex User role to your app roles and enables cross-region models
+USE ROLE ACCOUNTADMIN;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE SALES_APP_DEPLOYER_ROLE;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE SALES_APP_VIEWER_ROLE;
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+```
+
+### 2. Add AI Intelligence to `qualifier.html`
+See [`cortex_feature_snippet.js`](./cortex_feature_snippet.js) for an easy copy-paste frontend integration:
+- Adds a **"🤖 Analyze Opportunity with Cortex AI"** button.
+- Posts form answers and notes to `/api/cortex/qualify`.
+- Renders fit score (1-100), key solution pillars, custom opening pitch hooks, and objection handling guidance in real time.
+
+---
+
 ## 📱 Accessing & Sharing the App in Snowsight
 
 End users access and interact with the application directly from the **Snowsight UI** or via direct URL with single sign-on (SSO).
@@ -67,7 +89,7 @@ Snowsight Navigation:
 │                 │ Installed from: ...    │ │
 │                 │ [...]  [ Open App ]    │ │
 │                 └────────────────────────┘ │
-└────────────────────────-───────────────────┘
+└────────────────────────────────────────────┘
 ```
 
 ### 1. Where to Find the App in Snowsight
@@ -107,6 +129,10 @@ The built-in Express server inspects `html_assets/` at runtime and automatically
   - `/` or `/education` $\rightarrow$ Serves the primary education asset.
   - `/qualifier` $\rightarrow$ Serves the interactive prospect qualification tool.
   - Direct file access (e.g. `/<filename>.html`) and clean slugs (e.g. `/<slug>`) work automatically.
+- **Backend API Routes**:
+  - `POST /api/cortex/qualify`: Generates deal intelligence analysis with Cortex LLMs.
+  - `POST /api/cortex/complete`: Direct prompt completion via `SNOWFLAKE.CORTEX.COMPLETE`.
+  - `GET /api/health`: Health status and asset count.
 
 ---
 
@@ -117,10 +143,12 @@ The built-in Express server inspects `html_assets/` at runtime and automatically
 ├── html_assets/                    # 👈 Place your 2 HTML files here
 │   ├── education.html              # Primary sales overview & enablement guide
 │   └── qualifier.html              # Interactive prospect qualifier tool
+├── enable_cortex.sql               # 🤖 Script to enable Cortex AI permissions
+├── cortex_feature_snippet.js       # 🤖 Client-side feature snippet for qualifier.html
 ├── snowflake.yml                   # Snowflake CLI 3.20.0 project definition
 ├── app.yml                         # Container build & run configuration
 ├── package.json                    # Node.js dependencies & scripts
-├── server.js                       # Dynamic asset discovery & routing server
+├── server.js                       # Dynamic asset discovery, routing & Cortex API server
 ├── setup.sql                       # ❄️ Snowflake account & RBAC provisioning script
 └── README.md
 ```
