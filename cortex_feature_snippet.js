@@ -1,21 +1,57 @@
 /**
  * ============================================================================
- * Cortex AI Integration Snippet for qualifier.html
+ * Cortex AI Integration Snippets for qualifier.html
  * ============================================================================
  * 
- * Drop this script tag (or paste the code below) into your qualifier.html file
- * to enable real-time Cortex LLM-powered qualification, fit scoring, and pitch generation.
- *
- * HOW TO USE IN qualifier.html:
- * 1. Add a button in your HTML:
- *    <button id="cortex-btn" onclick="runCortexQualification()">🤖 Analyze Opportunity with Cortex AI</button>
- *
- * 2. Add an output container in your HTML:
- *    <div id="cortex-results-panel" style="display:none; margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;"></div>
- *
- * 3. Include this JavaScript:
+ * This file contains the two ways to integrate Snowflake Cortex AI into any qualifier HTML:
+ * 1. Transcript Analysis (Conversational / Notes Analysis)
+ * 2. Full Deal Qualification (Questionnaire Answers + Context)
  */
 
+// ============================================================================
+// Pattern 1: Meeting Transcript / Notes Analysis (Used in datacom-qualifier.html)
+// ============================================================================
+
+/**
+ * Sends meeting notes or call transcript to Snowflake Cortex COMPLETE (Claude 3.5 Sonnet)
+ * @param {string} transcriptText - Raw conversation text or notes
+ * @returns {Promise<string|null>} - Formatted AI analysis or null on error
+ */
+async function analyzeTranscriptWithCortex(transcriptText) {
+  if (!transcriptText || !transcriptText.trim()) return null;
+
+  try {
+    const response = await fetch('/api/cortex/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: `You are an executive sales engineer. Briefly analyze this customer conversation transcript for Data & AI opportunity fit (3-4 sentences highlighting: 1. Main Data/AI Pain Points, 2. Recommended Solution Pitch, 3. Qualification Recommendation):\n\n${transcriptText}`,
+        model: 'claude-3-5-sonnet'
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.response;
+    }
+    console.warn('Cortex API returned failure:', data.error);
+    return null;
+  } catch (err) {
+    console.error('Cortex transcript analysis network error:', err);
+    return null;
+  }
+}
+
+
+// ============================================================================
+// Pattern 2: Full Opportunity & Questionnaire Qualification
+// ============================================================================
+
+/**
+ * Runs end-to-end deal qualification including structured answers and prospect notes
+ * @param {Object} answers - Map of questionnaire answers (e.g. { dataVolume: '10TB+', currentCloud: 'AWS' })
+ * @param {string} prospectNotes - Free-text notes
+ */
 async function runCortexQualification(customAnswers = null, customNotes = null) {
   const btn = document.getElementById('cortex-btn');
   const resultsPanel = document.getElementById('cortex-results-panel');
