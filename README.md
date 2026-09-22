@@ -26,7 +26,8 @@ This application is built around the **Two-Asset Sales Enablement Pattern**:
 ├── html_assets/                    # 👈 Place your 2 HTML files here
 │   ├── education.html              # Primary sales overview & enablement guide
 │   └── qualifier.html              # Interactive prospect qualifier tool
-├── app.yml                         # Snowflake App Runtime (SAR) v2 deployment manifest
+├── snowflake.yml                   # Snowflake CLI project definition
+├── app.yml                         # Container build & run configuration
 ├── package.json                    # Node.js dependencies & scripts
 ├── server.js                       # Dynamic asset discovery & routing server
 ├── setup.sql                       # ❄️ Snowflake account & RBAC provisioning script
