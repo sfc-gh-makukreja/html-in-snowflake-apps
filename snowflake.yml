@@ -1,0 +1,18 @@
+definition_version: "2"
+
+entities:
+  sales_education_app:
+    type: snowflake-app
+    identifier:
+      name: SALES_EDUCATION_APP
+      database: APPS_DB
+      schema: SALES_APPS
+    query_warehouse: APPS_WH
+    artifacts:
+      - src: ./*
+        dest: ./
+        ignore:
+          - node_modules
+          - .git
+          - .scai
+          - .snowflake

@@ -1,20 +1,6 @@
-version: 2
-
 name: SALES_EDUCATION_APP
 label: "Sales Education & Qualifier"
 description: "Sales education and qualification tool for Data & AI solutions"
-database: APPS_DB
-schema: SALES_APPS
-query_warehouse: APPS_WH
-
-auto_resume: true
-auto_suspend_secs: 900
-
-ignore:
-  - node_modules
-  - .git
-  - .scai
-  - .snowflake
 
 install:
   commands:
